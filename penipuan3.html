@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FlashSaleMall - 11.11 Super Sale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: #f5f5f5;
+        color: #333;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      header {
+        background: linear-gradient(90deg, #ff6b00, #ff2d55);
+        color: white;
+        padding: 10px 16px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .top-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        font-weight: 700;
+        font-size: 20px;
+      }
+      .search-box {
+        flex: 1;
+        position: relative;
+      }
+      .search-box input {
+        width: 100%;
+        padding: 7px 30px 7px 10px;
+        border-radius: 999px;
+        border: none;
+        font-size: 13px;
+      }
+      .search-box span {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 14px;
+        opacity: 0.7;
+      }
+      .icons {
+        display: flex;
+        gap: 10px;
+        font-size: 18px;
+      }
+      nav {
+        display: flex;
+        gap: 10px;
+        padding: 8px 0 0;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+      nav span {
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.2);
+        white-space: nowrap;
+      }
+      main {
+        padding: 12px 16px 80px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      /* Banner */
+      .banner {
+        background: linear-gradient(135deg, #ff9f1c, #ff2d55);
+        color: white;
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .banner-left h2 {
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+      .banner-left p {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+      .banner-right {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.15);
+        padding: 8px 10px;
+        border-radius: 10px;
+        min-width: 90px;
+      }
+      .banner-right span {
+        display: block;
+        font-size: 10px;
+        font-weight: 500;
+        margin-top: 3px;
+      }
+
+      /* Grid produk */
+      .section-title {
+        font-weight: 600;
+        margin: 8px 0;
+        font-size: 14px;
+      }
+      .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+      }
+      .card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+      .thumb {
+        background: linear-gradient(135deg, #ece9e6, #ffffff);
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+      }
+      .card-body {
+        padding: 8px 10px 10px;
+        font-size: 12px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .title {
+        font-weight: 500;
+        height: 32px;
+        overflow: hidden;
+      }
+      .price {
+        color: #ff2d55;
+        font-weight: 700;
+      }
+      .strike {
+        text-decoration: line-through;
+        color: #aaa;
+        font-size: 11px;
+      }
+      .tag {
+        font-size: 10px;
+        background: #ffe4e9;
+        padding: 2px 6px;
+        border-radius: 999px;
+        display: inline-block;
+        color: #d81b60;
+      }
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        color: #777;
+      }
+
+      /* Drawer checkout */
+      .checkout-drawer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: -100%;
+        background: #fff;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.18);
+        padding: 14px 16px 18px;
+        max-height: 90vh;
+        overflow-y: auto;
+        transition: bottom 0.3s;
+        z-index: 20;
+      }
+      .checkout-drawer.open {
+        bottom: 0;
+      }
+      .drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .drawer-header h3 {
+        font-size: 15px;
+      }
+      .drawer-close {
+        font-size: 20px;
+        cursor: pointer;
+      }
+      .summary-line {
+        font-size: 12px;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .divider {
+        height: 1px;
+        background: #eee;
+        margin: 8px 0 10px;
+      }
+      .form-group {
+        margin-bottom: 10px;
+      }
+      .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 3px;
+        display: block;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 7px 9px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 12px;
+      }
+      .form-row {
+        display: flex;
+        gap: 8px;
+      }
+      .form-row .form-group {
+        flex: 1;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 10px;
+        background: linear-gradient(90deg, #ff6b00, #ff2d55);
+        border: none;
+        color: white;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 6px;
+        cursor: pointer;
+      }
+
+      /* Overlay dan efek error */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: none;
+        z-index: 15;
+      }
+      .overlay.show {
+        display: block;
+      }
+
+      .error-screen {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle, #ff1744, #b71c1c);
+        color: white;
+        display: none;
+        z-index: 50;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        font-family: "Courier New", monospace;
+      }
+      .error-box {
+        border: 2px solid #ff8a80;
+        padding: 16px;
+        border-radius: 10px;
+        animation: shake 0.5s infinite;
+      }
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-4px);
+        }
+        75% {
+          transform: translateX(4px);
+        }
+      }
+
+      .warning-screen {
+        position: fixed;
+        inset: 0;
+        background: #111;
+        color: #fff;
+        display: none;
+        z-index: 60;
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .warning-content {
+        max-width: 480px;
+        margin: 40px auto;
+        background: #1f2933;
+        border-radius: 12px;
+        padding: 18px 16px 24px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      }
+      .warning-content h2 {
+        color: #ff6b6b;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+      .warning-content ul {
+        font-size: 13px;
+        margin-left: 16px;
+        margin-bottom: 10px;
+      }
+      .warning-content li {
+        margin-bottom: 4px;
+      }
+      .badge-demo {
+        font-size: 11px;
+        background: #fff3cd;
+        color: #856404;
+        padding: 6px 8px;
+        border-radius: 6px;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="top-bar">
+        <div class="logo">FlashSaleMall</div>
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Cari: iPhone 15, TV 55, Sepatu Nike"
+          />
+          <span>🔍</span>
+        </div>
+        <div class="icons">
+          <span>❤️</span>
+          <span id="cartIcon">🛒</span>
+        </div>
+      </div>
+      <nav>
+        <span>Semua</span>
+        <span>Flash Sale</span>
+        <span>HP & Gadget</span>
+        <span>Elektronik</span>
+        <span>Fashion</span>
+        <span>Supermarket</span>
+        <span>Perabot</span>
+        <span>Olahraga</span>
+      </nav>
+    </header>
+
+    <main>
+      <div class="banner">
+        <div class="banner-left">
+          <h2>11.11 Super Flash Sale</h2>
+          <p>Diskon sampai 90% • Gratis Ongkir • COD Semua Kota</p>
+        </div>
+        <div class="banner-right">
+          <span id="timer">00:10:00</span>
+          <span>Sisa waktu</span>
+        </div>
+      </div>
+
+      <div class="section-title">Rekomendasi khusus untuk Anda</div>
+      <div class="products">
+        <!-- 1 -->
+        <div
+          class="card"
+          data-name="iPhone 15 Pro Max 256GB"
+          data-price="8999000"
+        >
+          <div class="thumb">📱</div>
+          <div class="card-body">
+            <div class="title">
+              iPhone 15 Pro Max 256GB Garansi Resmi • Midnight
+            </div>
+            <div>
+              <span class="price">Rp 8.999.000</span>
+              <span class="strike">Rp 21.999.000</span>
+            </div>
+            <span class="tag">Flash Sale 60%</span>
+            <div class="meta">
+              <span>Terjual 8.9RB</span><span>⭐ 4.9</span>
+            </div>
+          </div>
+        </div>
+        <!-- 2 -->
+        <div class="card" data-name="Smart TV 55 4K UHD" data-price="3499000">
+          <div class="thumb">📺</div>
+          <div class="card-body">
+            <div class="title">
+              Smart TV 55&quot; 4K UHD Netflix YouTube Dolby Vision
+            </div>
+            <div>
+              <span class="price">Rp 3.499.000</span>
+              <span class="strike">Rp 8.999.000</span>
+            </div>
+            <span class="tag">Gratis Ongkir</span>
+            <div class="meta">
+              <span>Terjual 5.1RB</span><span>⭐ 4.8</span>
+            </div>
+          </div>
+        </div>
+        <!-- 3 -->
+        <div class="card" data-name="Sneakers Running Pro" data-price="299000">
+          <div class="thumb">👟</div>
+          <div class="card-body">
+            <div class="title">Sneakers Running Pro UltraLight Breathable</div>
+            <div>
+              <span class="price">Rp 299.000</span>
+              <span class="strike">Rp 799.000</span>
+            </div>
+            <span class="tag">Voucher 50%</span>
+            <div class="meta"><span>Terjual 12RB</span><span>⭐ 4.7</span></div>
+          </div>
+        </div>
+        <!-- 4 -->
+        <div
+          class="card"
+          data-name="Headphone Bluetooth ANC"
+          data-price="499000"
+        >
+          <div class="thumb">🎧</div>
+          <div class="card-body">
+            <div class="title">Headphone Bluetooth Noise Cancelling 40H</div>
+            <div>
+              <span class="price">Rp 499.000</span>
+              <span class="strike">Rp 1.299.000</span>
+            </div>
+            <span class="tag">Terakhir 23 pcs</span>
+            <div class="meta">
+              <span>Terjual 3.4RB</span><span>⭐ 4.8</span>
+            </div>
+          </div>
+        </div>
+        <!-- 5 -->
+        <div
+          class="card"
+          data-name="Rice Cooker 2L Digital"
+          data-price="199000"
+        >
+          <div class="thumb">🍚</div>
+          <div class="card-body">
+            <div class="title">Rice Cooker Digital 2L 9 Fungsi Masak</div>
+            <div>
+              <span class="price">Rp 199.000</span>
+              <span class="strike">Rp 599.000</span>
+            </div>
+            <span class="tag">Best Seller</span>
+            <div class="meta"><span>Terjual 18RB</span><span>⭐ 4.9</span></div>
+          </div>
+        </div>
+        <!-- 6 -->
+        <div
+          class="card"
+          data-name="Set Panci Marble 10 in 1"
+          data-price="399000"
+        >
+          <div class="thumb">🍳</div>
+          <div class="card-body">
+            <div class="title">Set Panci Marble 10 in 1 Anti Lengket</div>
+            <div>
+              <span class="price">Rp 399.000</span>
+              <span class="strike">Rp 1.299.000</span>
+            </div>
+            <span class="tag">Gratis Ongkir</span>
+            <div class="meta">
+              <span>Terjual 6.7RB</span><span>⭐ 4.8</span>
+            </div>
+          </div>
+        </div>
+        <!-- 7 -->
+        <div class="card" data-name="Kemeja Pria Slim Fit" data-price="99000">
+          <div class="thumb">👔</div>
+          <div class="card-body">
+            <div class="title">Kemeja Pria Slim Fit Kantor / Casual</div>
+            <div>
+              <span class="price">Rp 99.000</span>
+              <span class="strike">Rp 249.000</span>
+            </div>
+            <span class="tag">Diskon 60%</span>
+            <div class="meta">
+              <span>Terjual 9.1RB</span><span>⭐ 4.6</span>
+            </div>
+          </div>
+        </div>
+        <!-- 8 -->
+        <div class="card" data-name="Hijab Pashmina Premium" data-price="49000">
+          <div class="thumb">🧕</div>
+          <div class="card-body">
+            <div class="title">Hijab Pashmina Premium Anti Kusut</div>
+            <div>
+              <span class="price">Rp 49.000</span>
+              <span class="strike">Rp 129.000</span>
+            </div>
+            <span class="tag">Bundle Hemat</span>
+            <div class="meta"><span>Terjual 15RB</span><span>⭐ 4.8</span></div>
+          </div>
+        </div>
+        <!-- 9 -->
+        <div
+          class="card"
+          data-name="Sepeda Lipat 20 Alloy"
+          data-price="1599000"
+        >
+          <div class="thumb">🚲</div>
+          <div class="card-body">
+            <div class="title">Sepeda Lipat 20&quot; Alloy Shimano 7 Speed</div>
+            <div>
+              <span class="price">Rp 1.599.000</span>
+              <span class="strike">Rp 3.499.000</span>
+            </div>
+            <span class="tag">Cashback 100RB</span>
+            <div class="meta">
+              <span>Terjual 1.2RB</span><span>⭐ 4.7</span>
+            </div>
+          </div>
+        </div>
+        <!-- 10 -->
+        <div class="card" data-name="Kursi Gaming RGB" data-price="899000">
+          <div class="thumb">💺</div>
+          <div class="card-body">
+            <div class="title">Kursi Gaming RGB Ergonomis Sandaran Tinggi</div>
+            <div>
+              <span class="price">Rp 899.000</span>
+              <span class="strike">Rp 2.199.000</span>
+            </div>
+            <span class="tag">Stok Terbatas</span>
+            <div class="meta">
+              <span>Terjual 2.3RB</span><span>⭐ 4.8</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Drawer Checkout -->
+    <div class="checkout-drawer" id="checkoutDrawer">
+      <div class="drawer-header">
+        <h3>Checkout Aman & Cepat</h3>
+        <div class="drawer-close" id="drawerClose">✕</div>
+      </div>
+      <div id="summaryArea"></div>
+      <div class="divider"></div>
+
+      <form id="checkoutForm">
+        <div class="form-group">
+          <label>Nama Lengkap Penerima</label>
+          <input
+            type="text"
+            id="nama"
+            required
+            placeholder="Nama lengkap sesuai KTP"
+          />
+        </div>
+        <div class="form-group">
+          <label>Alamat Lengkap</label>
+          <input
+            type="text"
+            id="alamat"
+            required
+            placeholder="Jalan, RT/RW, Kelurahan, Kecamatan"
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kota / Kab</label>
+            <input
+              type="text"
+              id="kota"
+              required
+              placeholder="Contoh: Surabaya"
+            />
+          </div>
+          <div class="form-group">
+            <label>Kode Pos</label>
+            <input type="text" id="kodepos" required placeholder="60111" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>No. HP (WhatsApp)</label>
+          <input type="tel" id="hp" required placeholder="08xxxxxxxxxx" />
+        </div>
+
+        <div class="divider"></div>
+        <div class="form-group">
+          <label>Metode Pembayaran (PALSU)</label>
+          <select id="metode" required>
+            <option value="cc">Kartu Kredit / Debit</option>
+            <option value="va">Virtual Account Bank</option>
+            <option value="ewallet">E-Wallet (Dana/OVO/GoPay)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Nomor Kartu / Rekening / E-Wallet</label>
+          <input
+            type="text"
+            id="nomor"
+            required
+            placeholder="4111 1111 1111 1111 / 08xxxxxxxxxx"
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Valid Thn/Bln (jika kartu)</label>
+            <input type="text" id="exp" placeholder="12/27" />
+          </div>
+          <div class="form-group">
+            <label>Kode CVV / PIN (RAHASIA)</label>
+            <input
+              type="password"
+              id="cvv"
+              required
+              placeholder="3 / 6 digit"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Kode OTP (dari SMS/WhatsApp)</label>
+          <input
+            type="text"
+            id="otp"
+            required
+            placeholder="Masukkan 6 digit OTP di sini"
+          />
+        </div>
+
+        <button type="submit" class="btn-primary">BAYAR SEKARANG</button>
+      </form>
+    </div>
+
+    <!-- Error Screen -->
+    <div class="error-screen" id="errorScreen">
+      <div class="error-box">
+        <div style="font-size: 24px; margin-bottom: 8px">
+          ❌ PEMBAYARAN GAGAL
+        </div>
+        <div style="font-size: 13px; margin-bottom: 6px">
+          TRANSAKSI DITOLAK BANK
+        </div>
+        <div style="font-size: 11px; margin-bottom: 4px">KODE: ERR-PAY-402</div>
+        <div style="font-size: 11px">
+          Saldo / limit kartu Anda sudah terdebet.
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning / Edukasi -->
+    <div class="warning-screen" id="warningScreen">
+      <div class="warning-content">
+        <h2>⚠️ ANDA MASUK SITUS BELANJA PALSU!</h2>
+        <p style="font-size: 13px; margin-bottom: 6px">
+          Tampang mirip e-commerce, tapi:
+        </p>
+        <ul>
+          <li>
+            Alamat web sedikit beda (misal: fashsalmall.com, bukan
+            flashsalemall.com).[web:107][web:124]
+          </li>
+          <li>
+            Harga terlalu murah, diskon tidak masuk akal.[web:111][web:117]
+          </li>
+          <li>
+            Diminta isi nomor kartu, CVV, PIN, dan OTP di halaman yang tidak
+            resmi.[web:109][web:114]
+          </li>
+          <li>
+            Biasanya link datang dari chat WA/iklan, bukan dari aplikasi
+            resmi.[web:105][web:118]
+          </li>
+        </ul>
+        <p style="font-size: 13px; margin-bottom: 10px">
+          Di dunia nyata, semua data yang barusan Anda isi langsung masuk ke
+          pelaku, lalu:
+        </p>
+        <ul>
+          <li>Kartu kredit / debit dikuras.</li>
+          <li>Akun e-commerce / e-wallet diambil alih.</li>
+          <li>Transaksi bodong atas nama Anda.</li>
+        </ul>
+        <div class="badge-demo">
+          DEMO EDUKASI SAJA — Tidak ada data yang disimpan di halaman ini.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const cards = document.querySelectorAll(".card");
+      const drawer = document.getElementById("checkoutDrawer");
+      const overlay = document.getElementById("overlay");
+      const summaryArea = document.getElementById("summaryArea");
+      const drawerClose = document.getElementById("drawerClose");
+      const cartIcon = document.getElementById("cartIcon");
+      const checkoutForm = document.getElementById("checkoutForm");
+      const errorScreen = document.getElementById("errorScreen");
+      const warningScreen = document.getElementById("warningScreen");
+      const timerEl = document.getElementById("timer");
+
+      let currentProduct = null;
+
+      function openDrawer(product) {
+        currentProduct = product;
+        const name = product.dataset.name;
+        const price = Number(product.dataset.price || 0);
+        const formatted = price.toLocaleString("id-ID");
+        summaryArea.innerHTML = `
+        <div class="summary-line"><span>Produk</span><span>${name}</span></div>
+        <div class="summary-line"><span>Harga</span><span>Rp ${formatted}</span></div>
+        <div class="summary-line"><span>Ongkir</span><span>Rp 0 (Gratis)</span></div>
+        <div class="summary-line" style="font-weight:700;">
+          <span>Total Bayar</span><span>Rp ${formatted}</span>
+        </div>
+      `;
+        drawer.classList.add("open");
+        overlay.classList.add("show");
+      }
+
+      cards.forEach((card) => {
+        card.addEventListener("click", () => openDrawer(card));
+      });
+
+      drawerClose.addEventListener("click", () => {
+        drawer.classList.remove("open");
+        overlay.classList.remove("show");
+      });
+
+      overlay.addEventListener("click", () => {
+        drawer.classList.remove("open");
+        overlay.classList.remove("show");
+      });
+
+      cartIcon.addEventListener("click", () => {
+        if (!currentProduct && cards[0]) openDrawer(cards[0]);
+        else {
+          drawer.classList.toggle("open");
+          overlay.classList.toggle("show");
+        }
+      });
+
+      // Timer countdown 10 menit
+      let remaining = 10 * 60; // detik
+      function updateTimer() {
+        const m = String(Math.floor(remaining / 60)).padStart(2, "0");
+        const s = String(remaining % 60).padStart(2, "0");
+        timerEl.textContent = `00:${m}:${s}`;
+        if (remaining > 0) {
+          remaining--;
+        }
+      }
+      updateTimer();
+      setInterval(updateTimer, 1000);
+
+      checkoutForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        drawer.classList.remove("open");
+        overlay.classList.remove("show");
+
+        // 1) Tampilkan error pembayaran
+        errorScreen.style.display = "flex";
+        setTimeout(() => {
+          errorScreen.style.display = "none";
+          // 2) Edukasi phishing
+          warningScreen.style.display = "block";
+        }, 2000);
+
+        const data = {
+          nama: document.getElementById("nama").value,
+          alamat: document.getElementById("alamat").value,
+          kota: document.getElementById("kota").value,
+          kodepos: document.getElementById("kodepos").value,
+          hp: document.getElementById("hp").value,
+          metode: document.getElementById("metode").value,
+          nomor: document.getElementById("nomor").value,
+          cvv: document.getElementById("cvv").value,
+          otp: document.getElementById("otp").value,
+        };
+        console.log("DATA YANG DIINCER PENIPU:", data);
+      });
+    </script>
+  </body>
+</html>
